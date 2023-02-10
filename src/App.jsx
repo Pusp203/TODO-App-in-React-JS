@@ -1,51 +1,58 @@
 import React, { useState } from "react";
 
 const App = () => {
-  const [items, setItems] = useState("");
-  const [todo, settodo] = useState([]);
-  console.log("todo", todo);
-  const handleAddto = (e) => {
+  const [todo, setTodo] = useState([]);
+  const [item, setItem] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleAddTodo = (e) => {
     e.preventDefault();
-    settodo([items, ...todo]);
-    setItems("");
-  };
-  //
-
-  const handleDelete = (value) => {
-    // console.log("val", value);
-    const filteredItems = todo.filter((val) => {
-      return val !== value;
-    });
-    console.log("filterd", filteredItems);
-    settodo(filteredItems);
+    setTodo([...todo, item]);
+    setItem("");
   };
 
-  const handleClick = (e) => {
-    setItems(e.target.value);
+  const handleUpdateTodo = (e) => {
+    e.preventDefault();
+    setTodo(todo.map((val) => (val === selectedItem ? item : val)));
+    setItem("");
+    setSelectedItem(null);
   };
+
+  const handleDeleteTodo = (value) => {
+    setTodo(todo.filter((val) => val !== value));
+  };
+
+  const handleSelectTodo = (value) => {
+    setItem(value);
+    setSelectedItem(value);
+  };
+
   return (
     <div>
-      <form action="">
+      <form onSubmit={selectedItem ? handleUpdateTodo : handleAddTodo}>
         <input
           type="text"
-          placeholder="enter your todo"
-          value={items}
-          onChange={handleClick}
+          value={item}
+          placeholder="Enter your Todo"
+          onChange={(e) => setItem(e.target.value)}
         />
-        <button type="submit" onClick={handleAddto}>
-          Add Todo
+        <button type="submit">
+          {selectedItem ? "Update Todo" : "Add Todo"}
         </button>
-
-        {todo.map((value) => (
-          <p>
-            {value}{" "}
-            <button type="button" onClick={() => handleDelete(value)}>
-              Delete
-            </button>
-          </p>
-        ))}
       </form>
+      {todo.map((value) => (
+        <p key={value}>
+          {value}{" "}
+          <button type="button" onClick={() => handleSelectTodo(value)}>
+            Edit
+          </button>{" "}
+          <button type="button" onClick={() => handleDeleteTodo(value)}>
+            Delete
+          </button>
+        </p>
+      ))}
     </div>
   );
 };
+
 export default App;
